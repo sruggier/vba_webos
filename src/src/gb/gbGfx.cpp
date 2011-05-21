@@ -21,6 +21,7 @@
 #include "../GBA.h"
 #include "gbGlobals.h"
 #include "gbSGB.h"
+#include <algorithm>
 
 u8 gbInvertTab[256] = {
   0x00,0x80,0x40,0xc0,0x20,0xa0,0x60,0xe0,
@@ -176,7 +177,10 @@ void gbRenderLine()
 
         unsigned colors = repack_colors(tile_b, tile_a);
 
-        while(bx >= 0) {
+        // For performance reasons, we merge the x < 160 and bx >= 0
+        // conditionals into one.
+        int last_bx = std::max(bx + x - 159, 0);
+        while (bx >= last_bx) {
           unsigned c = extract_color(colors, bx);
           
           gbLineBuffer[x] = c; // mark the gbLineBuffer color
@@ -202,8 +206,6 @@ void gbRenderLine()
           gbLineMix[x] = gbPalette[c];
           x++;
           --bx;
-          if(x >= 160)
-            break;
         }
         tx++;
         if(tx == 32)
@@ -307,7 +309,8 @@ void gbRenderLine()
 
             unsigned colors = repack_colors(tile_b, tile_a);
 
-            while(bx >= 0) {
+            int last_bx = std::max(bx + x - 159, 0);
+            while (bx >= last_bx) {
               unsigned c = extract_color(colors, bx);
 
               if(attrs & 0x80)
@@ -333,8 +336,6 @@ void gbRenderLine()
               gbLineMix[x] = gbPalette[c];
               x++;
               --bx;
-              if(x >= 160)
-                break;
             }
             tx++;
             if(tx == 32)
