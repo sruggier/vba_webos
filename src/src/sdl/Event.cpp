@@ -416,10 +416,10 @@ void sdlPollEvents()
           if(pauseWhenInactive) {
             if(emulating)
             {
-              soundPause();
               //write battery when pausing.
               //Doesn't hurt, and guarantees we get a good save in.
               sdlWriteBattery();
+              soundPause();
             }
           }
           
