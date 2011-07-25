@@ -1661,6 +1661,19 @@ void systemScreenCapture(int a)
   systemScreenMessage("Screen capture");
 }
 
+template <typename T, typename funcptr>
+Uint32 timed_wait(T sync_primitive, funcptr wait_func)
+{
+  Uint32 before = SDL_GetTicks();
+  wait_func(sync_primitive);
+  Uint32 after = SDL_GetTicks();
+  return after - before;
+}
+static Uint32 timed_SDL_SemWait(SDL_sem *sdlSem)
+{
+  return timed_wait(sdlSem, &SDL_SemWait);
+}
+
 void soundCallback(void *,u8 *stream,int len)
 {
   if(!emulating)
@@ -1673,16 +1686,22 @@ void soundCallback(void *,u8 *stream,int len)
    * stay in sync */
   bool lock = (!speedup && !throttle) ? true : false;
 
+  Uint32 bfWaitTime = 0;
   if (lock)
-    SDL_SemWait (sdlBufferFull);
+  {
+    bfWaitTime = timed_SDL_SemWait (sdlBufferFull);
+  }
 
-  SDL_SemWait (sdlBufferLock);
+  Uint32 blWaitTime = 0;
+  blWaitTime = timed_SDL_SemWait (sdlBufferLock);
   memcpy (stream, sdlBuffer, len);
   sdlSoundLen = 0;
   SDL_SemPost (sdlBufferLock);
 
   if (lock)
     SDL_SemPost (sdlBufferEmpty);
+
+  printf("BufferFull wait: %ums, BufferLock wait: %ums\n", bfWaitTime, blWaitTime);
 }
 
 void systemWriteDataToSoundBuffer()
@@ -1694,11 +1713,17 @@ void systemWriteDataToSoundBuffer()
 
   if ((sdlSoundLen + soundBufferLen) >= sdlBufferCapacity) {
     bool lock = (!speedup && !throttle) ? true : false;
+    Uint32 beWaitTime;
+    Uint32 be2WaitTime;
+    Uint32 blWaitTime;
+    Uint32 bl2WaitTime;
 
     if (lock)
-      SDL_SemWait (sdlBufferEmpty);
+    {
+      beWaitTime = timed_SDL_SemWait (sdlBufferEmpty);
+    }
 
-    SDL_SemWait (sdlBufferLock);
+    blWaitTime = timed_SDL_SemWait (sdlBufferLock);
     int copied = sdlBufferCapacity - sdlSoundLen;
     memcpy (sdlBuffer + sdlSoundLen, soundFinalWave, copied);
     sdlSoundLen = sdlBufferCapacity;
@@ -1708,26 +1733,31 @@ void systemWriteDataToSoundBuffer()
       SDL_SemPost (sdlBufferFull);
 
       /* wait for buffer to be dumped by soundCallback() */
-      SDL_SemWait (sdlBufferEmpty);
+      be2WaitTime = timed_SDL_SemWait (sdlBufferEmpty);
       SDL_SemPost (sdlBufferEmpty);
 
-      SDL_SemWait (sdlBufferLock);
+      bl2WaitTime = timed_SDL_SemWait (sdlBufferLock);
       memcpy (sdlBuffer, ((u8 *)soundFinalWave) + copied,
           soundBufferLen - copied);
       sdlSoundLen = soundBufferLen - copied;
       SDL_SemPost (sdlBufferLock);
+      printf("Full sdlBuffer, BE1: %ums, BE2: %ums, BL1:%ums, BL2, %ums\n",
+          beWaitTime, be2WaitTime, blWaitTime, bl2WaitTime);
     }
     else {
-      SDL_SemWait (sdlBufferLock);
+      bl2WaitTime = timed_SDL_SemWait (sdlBufferLock);
       memcpy (sdlBuffer, ((u8 *) soundFinalWave) + copied, soundBufferLen);
       SDL_SemPost (sdlBufferLock);
+      printf("Full sdlBuffer, locking disabled    , BL1:%ums, BL2, %ums\n",
+          blWaitTime, bl2WaitTime);
     }
   }
   else {
-    SDL_SemWait (sdlBufferLock);
+    Uint32 blWaitTime = timed_SDL_SemWait (sdlBufferLock);
     memcpy (sdlBuffer + sdlSoundLen, soundFinalWave, soundBufferLen);
      sdlSoundLen += soundBufferLen;
     SDL_SemPost (sdlBufferLock);
+    printf("Non-full sdlBuffer, BufferLock wait:%ums\n",blWaitTime);
   }
 }
 
