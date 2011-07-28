@@ -1568,8 +1568,22 @@ u32 FrameDeadline::getNextDeadline()
 void systemFrame()
 {
   static const unsigned maxFrameSkip = 9;
+  size_t frameLength = 1000/frameRate;
 
   u32 now = systemGetClock();
+
+  // On WebOS 1.4.5 on the Pixi, SDL_GetTicks occasionally resets to 33
+  // seconds into the past and stays there.
+  static u32 lastTicks = 0;
+  if (now < lastTicks)
+  {
+    fprintf(stderr, "systemGetClock() rewound! Latest value:%d, Last value:%d\n", now, lastTicks);
+    // Work around it by moving the deadline into the past by the same amount
+    u32 lastDeadline = autoFrameSkipDeadline.getNextDeadline();
+    int lastMargin = lastDeadline - lastTicks;
+    autoFrameSkipDeadline.reset(now + lastMargin);
+  }
+  lastTicks = now;
 
   // calculate whether or not to skip another frame
   if(!wasPaused && autoFrameSkip && !throttle) {
@@ -1579,9 +1593,16 @@ void systemFrame()
     if(margin > 0)
     {
       systemFrameSkip = 0;
-      size_t frameLength = 1000/frameRate;
       if (margin > frameLength)
-        SDL_Delay(margin - frameLength);
+      {
+        int delay = margin - frameLength;
+        if (delay > frameLength)
+        {
+          fprintf(stderr, "Abnormally long delay of %dms\n", delay);
+          delay = frameLength;
+        }
+        SDL_Delay(delay);
+      }
     }
     else if (systemFrameSkip < maxFrameSkip)
       // we're late, skip the next frame
