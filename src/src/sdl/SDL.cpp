@@ -1609,11 +1609,9 @@ void systemFrame()
       systemFrameSkip++;
     else
     {
-      // The maximum number of skipped frames has been hit, so we just give
-      // up. The deadline needs to be reset to prevent us from trying to
-      // catch up to the old deadline now that we've let it slip. Because the
-      // sound callback is used to throttle the rest of the emulation, it's
-      // impossible to catch up.
+      // The maximum number of skipped frames has been hit, so we just give up
+      // on emulating in real time. Resetting the next deadline prevents the
+      // lateness from accumulating over time.
       autoFrameSkipDeadline.reset(now);
       systemFrameSkip = 0;
     }
