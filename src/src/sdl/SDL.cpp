@@ -197,8 +197,6 @@ bool screenMessage = false;
 char screenMessageBuffer[21];
 u32  screenMessageTime = 0;
 
-// Patch #1382692 by deathpudding.
-// (pulled from vba 1.8.0)
 SDL_sem *sdlBufferLock  = NULL;
 
 static const Uint8 sdlAudioSampleSize = 2;
@@ -1721,8 +1719,6 @@ void soundCallback(void *,u8 *stream,int len)
 /// Copies soundBufferLen bytes from soundFinalWave into sdlBuffer
 void systemWriteDataToSoundBuffer()
 {
-  // Patch #1382692 by deathpudding.
-  // (ported from vba 1.8.0)
   if (SDL_GetAudioStatus () != SDL_AUDIO_PLAYING)
     SDL_PauseAudio (0);
 
@@ -1792,8 +1788,6 @@ bool systemSoundInit()
     return false;
   }
   soundBufferTotalLen = soundBufferLen*10;
-  // Patch #1382692 by deathpudding.
-  // (ported from vba 1.8.0)
   sdlBufferLock  = SDL_CreateSemaphore (1);
 
   memset(sdlBufferFilled, 0, sizeof(sdlBufferFilled));
