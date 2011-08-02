@@ -573,12 +573,12 @@ void sdlHandleEvent(const SDL_Event& event)
 //      break;
     case SDLK_ESCAPE:
     {
-      //make sure we have a save...
-      sdlWriteBattery();
-
       paused = true;
       SDL_PauseAudio(paused);
       wasPaused = true;
+
+      //make sure we have a save...
+      sdlWriteBattery();
 
       eMenuResponse r = optionsMenu();
       switch ( r )
