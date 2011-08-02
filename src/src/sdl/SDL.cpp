@@ -197,7 +197,8 @@ bool screenMessage = false;
 char screenMessageBuffer[21];
 u32  screenMessageTime = 0;
 
-SDL_sem *sdlBufferLock  = NULL;
+SDL_mutex *sdlBufferLock  = NULL;
+SDL_cond *sdlBufferReady = NULL;
 
 static const Uint8 sdlAudioSampleSize = 2;
 static const Uint8 sdlAudioChannels = 2;
@@ -1691,28 +1692,23 @@ void soundCallback(void *,u8 *stream,int len)
 
   size_t underrun = false;
 
-  SDL_SemWait (sdlBufferLock);
+  SDL_mutexP (sdlBufferLock);
   size_t current = sdlBufferConsumeNext;
   size_t next = (sdlBufferConsumeNext + 1) % sdlNumBuffers;
-  if (sdlBufferFilled[current] >= len)
+  if (sdlBufferFilled[current] < len)
   {
-    memcpy (stream, sdlBuffer[current], len);
-    sdlBufferFilled[current] = 0;
-    sdlBufferConsumeNext = next;
-  }
-  // If there's an underrun, wait for the emulation thread to catch up
-  else
-  {
+    // If there's an underrun, wait for the emulation thread to catch up
     underrun = sdlBufferFilled[current] + 1;
-    // try to minimize glitching by reusing stale audio
-    size_t last = (sdlBufferConsumeNext - 1) % sdlNumBuffers;
-    memcpy (stream, sdlBuffer[last], len);
+    SDL_CondWait(sdlBufferReady, sdlBufferLock);
   }
-  SDL_SemPost (sdlBufferLock);
+  memcpy (stream, sdlBuffer[current], len);
+  sdlBufferFilled[current] = 0;
+  sdlBufferConsumeNext = next;
+  SDL_mutexV (sdlBufferLock);
 
 #ifdef SOUND_SYNC_DEBUG
   if (underrun)
-    fprintf(stderr, "Sound underrun on buffer %d, which is filled %d bytes, need %d!\n", current, underrun - 1, len);
+    fprintf(stderr, "Sound underrun on buffer %d, which was filled %d bytes before waiting, need %d!\n", current, underrun - 1, len);
 #endif
 }
 
@@ -1724,7 +1720,7 @@ void systemWriteDataToSoundBuffer()
 
   int overrun = false;
 
-  SDL_SemWait (sdlBufferLock);
+  SDL_mutexP (sdlBufferLock);
 
   size_t bytes_remaining = soundBufferLen;
   u8 *src = reinterpret_cast<u8*>(soundFinalWave);
@@ -1749,10 +1745,13 @@ void systemWriteDataToSoundBuffer()
     sdlBufferFilled[current] += copied;
 
     if (copied == current_free)
+    {
       sdlBufferFillNext = next;
+      SDL_CondSignal(sdlBufferReady);
+    }
   }
 
-  SDL_SemPost (sdlBufferLock);
+  SDL_mutexV (sdlBufferLock);
 
 #ifdef SOUND_SYNC_DEBUG
   if (overrun)
@@ -1788,7 +1787,8 @@ bool systemSoundInit()
     return false;
   }
   soundBufferTotalLen = soundBufferLen*10;
-  sdlBufferLock  = SDL_CreateSemaphore (1);
+  sdlBufferLock  = SDL_CreateMutex ();
+  sdlBufferReady = SDL_CreateCond();
 
   memset(sdlBufferFilled, 0, sizeof(sdlBufferFilled));
   sdlBufferFillNext = 0;
@@ -1801,8 +1801,10 @@ bool systemSoundInit()
 void systemSoundShutdown()
 {
   SDL_CloseAudio ();
-  SDL_DestroySemaphore (sdlBufferLock);
+  SDL_DestroyMutex (sdlBufferLock);
+  SDL_DestroyCond (sdlBufferReady);
   sdlBufferLock  = NULL;
+  sdlBufferReady = NULL;
 }
 
 void systemSoundPause()
