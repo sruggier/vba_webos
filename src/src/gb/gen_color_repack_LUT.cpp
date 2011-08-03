@@ -34,7 +34,7 @@ int main(void)
 	{
 		if (i%8 == 0)
 			cout << "\n\t";
-		// If i were, for example, 0x56 (01010110 in binary), new bits would be
+		// If it were, for example, 0x56 (01010110 in binary), new bits would be
 		// inserted as follows: -0-1-0-1-0-1-1-0, so the output would be
 		// 0x1114, or 0001000100010100.
 		uint16_t output = 0;
