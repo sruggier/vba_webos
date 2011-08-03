@@ -42,6 +42,13 @@
   V_FLAG = ((NEG(a) & POS(b) & POS(c)) |\
             (POS(a) & NEG(b) & NEG(c))) ? true : false;
 
+#define GETCONDFLAGS(r1, r2, r3, r4) \
+     "mrs "#r4", cpsr;" \
+     "ubfx "#r1", "#r4", #31, #1;" \
+     "ubfx "#r2", "#r4", #30, #1;" \
+     "ubfx "#r3", "#r4", #29, #1;" \
+     "ubfx "#r4", "#r4", #28, #1;"
+
 
 /*-----------------------------------------------------------------------------
  *  Thumb macro definitions
@@ -53,15 +60,10 @@
 //=============================================================================
 #define ADD_RD_RS_RN \
      asm( "adds %0, %6, %5;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #31, #1;" \
-     "ubfx %2, r3, #30, #1;" \
-     "ubfx %3, r3, #29, #1;" \
-     "ubfx %4, r3, #28, #1;" \
+     GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) \
-       : "r3" );
+       : "r" (value), "r" (reg[source].I) );
 //#define ADD_RD_RS_RN \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -84,15 +86,10 @@
 //=============================================================================
 #define ADD_RD_RS_O3 \
      asm( "adds %0, %6, %5;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #31, #1;" \
-     "ubfx %2, r3, #30, #1;" \
-     "ubfx %3, r3, #29, #1;" \
-     "ubfx %4, r3, #28, #1;" \
+     GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) \
-       : "r3" );
+       : "r" (value), "r" (reg[source].I) );
 //#define ADD_RD_RS_O3 \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -115,15 +112,10 @@
 //=============================================================================
 #define ADD_RN_O8(d) \
      asm( "adds %0, %6, %5;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #31, #1;" \
-     "ubfx %2, r3, #30, #1;" \
-     "ubfx %3, r3, #29, #1;" \
-     "ubfx %4, r3, #28, #1;" \
+     GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[(d)].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (opcode & 255), "r" (reg[(d)].I) \
-       : "r3" );
+       : "r" (opcode & 255), "r" (reg[(d)].I) );
 //#define ADD_RN_O8(d) \
 //   {\
 //     u32 lhs = reg[(d)].I;\
@@ -146,15 +138,10 @@
 //=============================================================================
 #define CMN_RD_RS \
     asm ( "cmn %5, %4;" \
-     "mrs r3, cpsr;" \
-     "ubfx %0, r3, #31, #1;" \
-     "ubfx %1, r3, #30, #1;" \
-     "ubfx %2, r3, #29, #1;" \
-     "ubfx %3, r3, #28, #1;" \
+     GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[dest].I) \
-       : "r3" );
+       : "r" (value), "r" (reg[dest].I) );
 //#define CMN_RD_RS \
 //   {\
 //     u32 lhs = reg[dest].I;\
@@ -197,15 +184,10 @@
 //=============================================================================
 #define SUB_RD_RS_RN \
      asm( "subs %0, %6, %5;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #31, #1;" \
-     "ubfx %2, r3, #30, #1;" \
-     "ubfx %3, r3, #29, #1;" \
-     "ubfx %4, r3, #28, #1;" \
+     GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) \
-       : "r3" );
+       : "r" (value), "r" (reg[source].I) );
 //#define SUB_RD_RS_RN \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -228,15 +210,10 @@
 //=============================================================================
 #define SUB_RD_RS_O3 \
      asm( "subs %0, %6, %5;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #31, #1;" \
-     "ubfx %2, r3, #30, #1;" \
-     "ubfx %3, r3, #29, #1;" \
-     "ubfx %4, r3, #28, #1;" \
+     GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) \
-       : "r3" );
+       : "r" (value), "r" (reg[source].I) );
 //#define SUB_RD_RS_O3 \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -259,15 +236,10 @@
 //=============================================================================
 #define SUB_RN_O8(d) \
      asm( "subs %0, %6, %5;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #31, #1;" \
-     "ubfx %2, r3, #30, #1;" \
-     "ubfx %3, r3, #29, #1;" \
-     "ubfx %4, r3, #28, #1;" \
+     GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[(d)].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (opcode & 255), "r" (reg[(d)].I) \
-       : "r3" );
+       : "r" (opcode & 255), "r" (reg[(d)].I) );
 //#define SUB_RN_O8(d) \
 //   {\
 //     u32 lhs = reg[(d)].I;\
@@ -290,15 +262,10 @@
 //=============================================================================
 #define CMP_RN_O8(d) \
     asm ( "cmp %5, %4;" \
-     "mrs r3, cpsr;" \
-     "ubfx %0, r3, #31, #1;" \
-     "ubfx %1, r3, #30, #1;" \
-     "ubfx %2, r3, #29, #1;" \
-     "ubfx %3, r3, #28, #1;" \
+     GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (opcode & 255), "r" (reg[(d)].I) \
-       : "r3" );
+       : "r" (opcode & 255), "r" (reg[(d)].I) );
 //#define CMP_RN_O8(d) \
 //   {\
 //     u32 lhs = reg[(d)].I;\
@@ -489,15 +456,10 @@
 //=============================================================================
 #define CMP_RD_RS \
     asm ( "cmp %5, %4;" \
-     "mrs r3, cpsr;" \
-     "ubfx %0, r3, #31, #1;" \
-     "ubfx %1, r3, #30, #1;" \
-     "ubfx %2, r3, #29, #1;" \
-     "ubfx %3, r3, #28, #1;" \
+     GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[dest].I) \
-       : "r3" );
+       : "r" (value), "r" (reg[dest].I) );
 //#define CMP_RD_RS \
 //   {\
 //     u32 lhs = reg[dest].I;\
