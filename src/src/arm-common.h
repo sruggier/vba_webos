@@ -16,6 +16,16 @@
 #ifndef ARM_COMMON_H
 #define ARM_COMMON_H
 
+// Details about the native architecture
+# if defined(__ARM_ARCH_7__) || \
+     defined(__ARM_ARCH_7A__) || \
+     defined(__ARM_ARCH_7R__) || \
+     defined(__ARM_ARCH_7M__) || \
+     defined(__ARM_ARCH_7EM__) || \
+     defined(__ARM_ARCH_6T2__)
+# define _ARM_THUMB2_
+#endif
+
 //Some c-core helper macros
 #define NEG(i) ((i) >> 31)
 #define POS(i) ((~(i)) >> 31)
@@ -34,11 +44,23 @@
   V_FLAG = ((NEG(a) & POS(b) & POS(c)) |\
             (POS(a) & NEG(b) & NEG(c))) ? true : false;
 
+#if defined(_ARM_THUMB2_)
 # define GETCONDFLAGS(r1, r2, r3, r4) \
       "mrs "#r4", cpsr;" \
       "ubfx "#r1", "#r4", #31, #1;" \
       "ubfx "#r2", "#r4", #30, #1;" \
       "ubfx "#r3", "#r4", #29, #1;" \
       "ubfx "#r4", "#r4", #28, #1;"
+#else
+# define GETCONDFLAGS(r1, r2, r3, r4) \
+      "mov "#r1", #0;" \
+      "mov "#r2", #0;" \
+      "mov "#r3", #0;" \
+      "mov "#r4", #0;" \
+      "movmi "#r1", #1;" \
+      "moveq "#r2", #1;" \
+      "movcs "#r3", #1;" \
+      "movvs "#r4", #1;"
+#endif
 
 #endif

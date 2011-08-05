@@ -353,11 +353,10 @@
 //=============================================================================
 #define LOGICAL_LSL_REG \
     asm( "lsls %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "movcc %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_OUT) \
-     : "r" (reg[opcode & 0x0f].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[opcode & 0x0f].I), "r" (shift) );
 //#define LOGICAL_LSL_REG \
 //   {\
 //     u32 v = reg[opcode & 0x0f].I;\
@@ -373,11 +372,10 @@
 //=============================================================================
 #define LOGICAL_LSR_REG \
     asm( "lsrs %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "movcc %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_OUT) \
-     : "r" (reg[opcode & 0x0f].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[opcode & 0x0f].I), "r" (shift) );
 //#define LOGICAL_LSR_REG \
 //   {\
 //     u32 v = reg[opcode & 0x0f].I;\
@@ -393,11 +391,10 @@
 //=============================================================================
 #define LOGICAL_ASR_REG \
     asm( "asrs %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "movcc %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_OUT) \
-     : "r" (reg[opcode & 0x0f].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[opcode & 0x0f].I), "r" (shift) );
 //#define LOGICAL_ASR_REG \
 //   {\
 //     u32 v = reg[opcode & 0x0f].I;\
@@ -413,11 +410,10 @@
 //=============================================================================
 #define LOGICAL_ROR_REG \
     asm( "rors %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "movcc %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_OUT) \
-     : "r" (reg[opcode & 0x0f].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[opcode & 0x0f].I), "r" (shift) );
 //#define LOGICAL_ROR_REG \
 //   {\
 //     u32 v = reg[opcode & 0x0f].I;\
@@ -457,11 +453,10 @@
 //=============================================================================
 #define LOGICAL_ROR_IMM \
     asm( "rors %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "movcc %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_OUT) \
-     : "r" (opcode & 0xff), "r" (shift) \
-     : "r3" );
+     : "r" (opcode & 0xff), "r" (shift) );
 //#define LOGICAL_ROR_IMM \
 //   {\
 //     u32 v = opcode & 0xff;\

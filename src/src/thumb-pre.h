@@ -285,11 +285,10 @@
 //=============================================================================
 #define LSL_RD_RM_I5 \
     asm( "lsls %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[source].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[source].I), "r" (shift) );
 //#define LSL_RD_RM_I5 \
 //   {\
 //     C_FLAG = (reg[source].I >> (32 - shift)) & 1 ? true : false;\
@@ -303,11 +302,10 @@
 //=============================================================================
 #define LSL_RD_RS \
     asm( "lsls %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[dest].I), "r" (value) \
-     : "r3" );
+     : "r" (reg[dest].I), "r" (value) );
 //#define LSL_RD_RS \
 //   {\
 //     C_FLAG = (reg[dest].I >> (32 - value)) & 1 ? true : false;\
@@ -321,11 +319,10 @@
 //=============================================================================
 #define LSR_RD_RM_I5 \
     asm( "lsrs %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[source].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[source].I), "r" (shift) );
 //#define LSR_RD_RM_I5 \
 //   {\
 //     C_FLAG = (reg[source].I >> (shift - 1)) & 1 ? true : false;\
@@ -339,11 +336,10 @@
 //=============================================================================
 #define LSR_RD_RS \
     asm( "lsrs %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[dest].I), "r" (value) \
-     : "r3" );
+     : "r" (reg[dest].I), "r" (value) );
 //#define LSR_RD_RS \
 //   {\
 //     C_FLAG = (reg[dest].I >> (value - 1)) & 1 ? true : false;\
@@ -357,11 +353,10 @@
 //=============================================================================
 #define ASR_RD_RM_I5 \
     asm( "asrs %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[source].I), "r" (shift) \
-     : "r3" );
+     : "r" (reg[source].I), "r" (shift) );
 //#define ASR_RD_RM_I5 \
 //   {\
 //     C_FLAG = ((s32)reg[source].I >> (int)(shift - 1)) & 1 ? true : false;\
@@ -375,11 +370,10 @@
 //=============================================================================
 #define ASR_RD_RS \
     asm( "asrs %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[dest].I), "r" (value) \
-     : "r3" );
+     : "r" (reg[dest].I), "r" (value) );
 //#define ASR_RD_RS \
 //   {\
 //     C_FLAG = ((s32)reg[dest].I >> (int)(value - 1)) & 1 ? true : false;\
@@ -393,11 +387,10 @@
 //=============================================================================
 #define ROR_RD_RS \
     asm( "rors %0, %2, %3;" \
-     "mrs r3, cpsr;" \
-     "ubfx %1, r3, #29, #1;" \
+     "mov %1, #0;" \
+     "movcs %1, #1;" \
      : "=r" (value), "=r" (C_FLAG) \
-     : "r" (reg[dest].I), "r" (value) \
-     : "r3" );
+     : "r" (reg[dest].I), "r" (value) );
 //#define ROR_RD_RS \
 //   {\
 //     C_FLAG = (reg[dest].I >> (value - 1)) & 1 ? true : false;\
