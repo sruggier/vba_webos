@@ -39,7 +39,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) );
+       : "r" (value), "r" (reg[source].I) \
+       : GETCONDFLAGS_REGS );
 //#define ADD_RD_RS_RN \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -65,7 +66,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) );
+       : "r" (value), "r" (reg[source].I) \
+       : GETCONDFLAGS_REGS );
 //#define ADD_RD_RS_O3 \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -91,7 +93,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[(d)].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (opcode & 255), "r" (reg[(d)].I) );
+       : "r" (opcode & 255), "r" (reg[(d)].I) \
+       : GETCONDFLAGS_REGS );
 //#define ADD_RN_O8(d) \
 //   {\
 //     u32 lhs = reg[(d)].I;\
@@ -117,7 +120,8 @@
      GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[dest].I) );
+       : "r" (value), "r" (reg[dest].I) \
+       : GETCONDFLAGS_REGS );
 //#define CMN_RD_RS \
 //   {\
 //     u32 lhs = reg[dest].I;\
@@ -163,7 +167,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) );
+       : "r" (value), "r" (reg[source].I) \
+       : GETCONDFLAGS_REGS );
 //#define SUB_RD_RS_RN \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -189,7 +194,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[source].I) );
+       : "r" (value), "r" (reg[source].I) \
+       : GETCONDFLAGS_REGS );
 //#define SUB_RD_RS_O3 \
 //   {\
 //     u32 lhs = reg[source].I;\
@@ -215,7 +221,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[(d)].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (opcode & 255), "r" (reg[(d)].I) );
+       : "r" (opcode & 255), "r" (reg[(d)].I) \
+       : GETCONDFLAGS_REGS );
 //#define SUB_RN_O8(d) \
 //   {\
 //     u32 lhs = reg[(d)].I;\
@@ -241,7 +248,8 @@
      GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (opcode & 255), "r" (reg[(d)].I) );
+       : "r" (opcode & 255), "r" (reg[(d)].I) \
+       : GETCONDFLAGS_REGS );
 //#define CMP_RN_O8(d) \
 //   {\
 //     u32 lhs = reg[(d)].I;\
@@ -428,7 +436,8 @@
      GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[dest].I) );
+       : "r" (value), "r" (reg[dest].I) \
+       : GETCONDFLAGS_REGS );
 //#define CMP_RD_RS \
 //   {\
 //     u32 lhs = reg[dest].I;\

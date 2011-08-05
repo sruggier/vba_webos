@@ -51,16 +51,16 @@
       "ubfx "#r2", "#r4", #30, #1;" \
       "ubfx "#r3", "#r4", #29, #1;" \
       "ubfx "#r4", "#r4", #28, #1;"
+# define GETCONDFLAGS_REGS
 #else
 # define GETCONDFLAGS(r1, r2, r3, r4) \
-      "mov "#r1", #0;" \
-      "mov "#r2", #0;" \
-      "mov "#r3", #0;" \
-      "mov "#r4", #0;" \
-      "movmi "#r1", #1;" \
-      "moveq "#r2", #1;" \
-      "movcs "#r3", #1;" \
-      "movvs "#r4", #1;"
+      "mrs r3, cpsr;" \
+      "mov "#r4", #1;" \
+      "and "#r1", "#r4", r3, lsr #31;" \
+      "and "#r2", "#r4", r3, lsr #30;" \
+      "and "#r3", "#r4", r3, lsr #29;" \
+      "and "#r4", "#r4", r3, lsr #28;"
+# define GETCONDFLAGS_REGS "r3"
 #endif
 
 #endif

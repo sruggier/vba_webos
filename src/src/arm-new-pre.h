@@ -57,7 +57,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[base].I) );
+       : "r" (value), "r" (reg[base].I) \
+       : GETCONDFLAGS_REGS );
 //#define OP_SUBS \
 //   {\
 //     u32 lhs = reg[base].I;\
@@ -98,7 +99,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[base].I) );
+       : "r" (value), "r" (reg[base].I) \
+       : GETCONDFLAGS_REGS );
 //#define OP_RSBS \
 //   {\
 //     u32 lhs = reg[base].I;\
@@ -139,7 +141,8 @@
      GETCONDFLAGS(%1, %2, %3, %4) \
        : "=r" (reg[dest].I), \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[base].I) );
+       : "r" (value), "r" (reg[base].I) \
+       : GETCONDFLAGS_REGS );
 //#define OP_ADDS \
 //   {\
 //     u32 lhs = reg[base].I;\
@@ -304,7 +307,8 @@
      GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[base].I) );
+       : "r" (value), "r" (reg[base].I) \
+       : GETCONDFLAGS_REGS );
 
 //#define OP_CMP \
 //   {\
@@ -331,7 +335,8 @@
      GETCONDFLAGS(%0, %1, %2, %3) \
        : \
         "=r" (N_FLAG), "=r" (Z_FLAG), "=r" (C_FLAG), "=r" (V_FLAG) \
-       : "r" (value), "r" (reg[base].I) );
+       : "r" (value), "r" (reg[base].I) \
+       : GETCONDFLAGS_REGS );
 //#define OP_CMN \
 //   {\
 //     u32 lhs = reg[base].I;\
