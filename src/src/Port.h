@@ -62,10 +62,21 @@ static inline u32 swap32(u32 v)
   *((u32 *)x) = swap32((v))
 #endif
 #else
+#if defined(__arm__) && defined(__ARMEL__)
+#define READ16LE(base) \
+  ({ u32 result; \
+     __asm__ ("ldrh %0, [%1]" : "=r" (result) : "r" (base) : ); \
+      result; })
+#define READ32LE(base) \
+  ({ u32 result; \
+     __asm__ ("ldr %0, [%1]" : "=r" (result) : "r" (base) : ); \
+      result; })
+#else
 #define READ16LE(x) \
   *((u16 *)x)
 #define READ32LE(x) \
   *((u32 *)x)
+#endif
 #define WRITE16LE(x,v) \
   *((u16 *)x) = (v)
 #define WRITE32LE(x,v) \
