@@ -3339,6 +3339,8 @@ void log(const char *defaultMsg, ...)
 extern void winlog(const char *, ...);
 #endif
 
+#include "thumb-defines.h"
+
 void CPULoop(int ticks)
 {  
   int clockTicks;
