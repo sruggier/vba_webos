@@ -18,7 +18,11 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 u32 opcode = CPUReadHalfWordQuick(armNextPC);
-clockTicks = thumbCycles[opcode >> 8] + memoryWaitFetch[(armNextPC >> 24) & 15];
+u32 instruction_type = opcode >> 8;
+u32 memory_region = (armNextPC >> 24) & 15;
+int instruction_cycles = thumbCycles[instruction_type];
+int fetch_cycles = memoryWaitFetch[memory_region];
+clockTicks = instruction_cycles + fetch_cycles;
 #ifndef FINAL_VERSION
 if(armNextPC == stop) {
   armNextPC = armNextPC++;
