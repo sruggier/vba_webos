@@ -185,6 +185,9 @@ void GL_Init()
     programObject = esLoadProgram ( ( char *)vShaderStr, (char *)fShaderStr );
     checkError();
 
+    glUseProgram ( programObject );
+    checkError();
+
     // Get the attribute locations
     positionLoc = glGetAttribLocation ( programObject, "a_position" );
     checkError();
@@ -398,10 +401,6 @@ void updateOrientation()
 
 void drawSkin()
 {
-  // Use the program object
-  glUseProgram ( programObject );
-  checkError();
-
   glVertexAttribPointer( positionLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), controller_coords );
   checkError();
   glVertexAttribPointer( texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), texCoords );
@@ -456,10 +455,6 @@ void GL_RenderPix(u8 * pix)
     /*-----------------------------------------------------------------------------
      *  Draw the frame of the gb(c/a)
      *-----------------------------------------------------------------------------*/
-
-    // Use the program object
-    glUseProgram ( programObject );
-    checkError();
 
     glVertexAttribPointer( positionLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), vertexCoords );
     checkError();
@@ -533,9 +528,6 @@ void SDL_DrawSurfaceAsGLTexture( SDL_Surface * s, float * coords )
   /*-----------------------------------------------------------------------------
    *  Now actually render it
    *-----------------------------------------------------------------------------*/
-  
-  glUseProgram ( programObject );
-  checkError();
 
   glVertexAttribPointer( positionLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), coords );
   checkError();
